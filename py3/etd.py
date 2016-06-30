@@ -13,7 +13,7 @@ class ETD:
         The number of features (and therefore the length of the weight vector).
     z : Vector[float]
         The eligibility trace vector.
-    theta : Vector[float]
+    w : Vector[float]
         The weight vector.
     F : float
         The followon trace scalar.
@@ -29,15 +29,19 @@ class ETD:
             The number of features
         """
         self.n = n
-        self.theta = np.zeros(self.n)
+        self.w = np.zeros(self.n)
         self.z = np.zeros(self.n)
         self.F = 0
         self.M = 0
 
+    def get_value(self, x):
+        """Get the approximate value for feature vector `x`."""
+        return np.dot(self.w, x)
+
     def update(self, x, r, xp, alpha, gm, gm_p, lm, rho, interest):
         """Update from new experience.
 
-        
+
         Parameters
         ----------
         x : array_like
@@ -67,11 +71,11 @@ class ETD:
         Other parameters are floats but are generally expected to be in the 
         interval [0, 1].
         """
-        delta = r + gm_p*np.dot(self.theta, xp) - np.dot(self.theta, x)
+        delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.F = gm*self.F + interest
         self.M = lm*interest + (1 - lm)*self.F
         self.z = rho*(x*self.M + gm*lm*self.z)
-        self.theta += alpha*delta*self.z
+        self.w += alpha*delta*self.z
 
         # prepare for next iteration
         self.F *= rho
@@ -80,5 +84,5 @@ class ETD:
         """Reset weights, traces, and other parameters."""
         self.F = 0
         self.M = 0
-        self.theta = np.zeros(self.n)
+        self.w = np.zeros(self.n)
         self.z = np.zeros(self.n)
