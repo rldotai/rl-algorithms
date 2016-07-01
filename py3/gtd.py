@@ -2,8 +2,9 @@
 Gradient-TD(λ) Learning Algorithm, via Adam White's doctoral thesis, pg. 47., 
 and Maei's doctoral thesis pg. 74 and 91-92 for the original derivation and 
 analysis. 
-Note that the algorithm is referred to as TDC(λ) in that work, whereas GTD and 
-GTD2 refer to variations on the same idea but without eligibility traces.
+Note that the algorithm is referred to as TDC(λ) or GTD(λ) in that work, 
+whereas GTD and GTD2 refer to variations on the same idea but without 
+eligibility traces.
 
 The advantage of GTD(λ) is its stability in the off-policy setting, at the 
 expense of worse sample efficiency and therefore slower learning.
@@ -63,7 +64,7 @@ class GTD:
         """Get the approximate value for feature vector `x`."""
         return np.dot(self.w, x)
 
-    def update(self, x, r, xp, alpha, beta, gm, gm_p, lm, rho:
+    def update(self, x, r, xp, alpha, beta, gm, gm_p, lm, lm_p, rho:
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
         
@@ -86,6 +87,8 @@ class GTD:
         lm : float 
             Lambda, abbreviated `lm`, is the bootstrapping parameter for the 
             current timestep.
+        lm_p: float 
+            The bootstrapping parameter for the next timestep.
         rho : float 
             The importance sampling ratio between the target policy and the 
             behavior policy for the current timestep.
@@ -98,7 +101,7 @@ class GTD:
         """
         delta = r + gm_p*np.dot(self.theta, xp) - np.dot(self.theta, x)
         self.e = rho*(lm*gm*self.e + x)
-        self.w += alpha*(delta*self.e + gm_p*(1-lm)*np.dot(self.e, self.h)*xp)
+        self.w += alpha*(delta*self.e + gm_p*(1-lm_p)*np.dot(self.e, self.h)*xp)
         self.h += beta*(delta*self.e + np.dot(self.h, x)*x)
 
     def reset(self):
