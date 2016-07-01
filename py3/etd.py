@@ -39,7 +39,7 @@ class ETD:
         return np.dot(self.w, x)
 
     def update(self, x, r, xp, alpha, gm, gm_p, lm, rho, interest):
-        """Update from new experience.
+        """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
 
         Parameters

@@ -1,16 +1,19 @@
 """
-Hybrid-TD Learning Algorithm, via Adam White's doctoral thesis, pg. 173.
+Gradient-TD(λ) Learning Algorithm, via Adam White's doctoral thesis, pg. 47., 
+and Maei's doctoral thesis pg. 74 and 91-92 for the original derivation and 
+analysis. 
+Note that the algorithm is referred to as TDC(λ) in that work, whereas GTD and 
+GTD2 refer to variations on the same idea but without eligibility traces.
 
-Like GTD(λ), it doesn't diverge in the off-policy case, while acting like TD(λ)
-in the on-policy case, particularly with regards to good sample efficiency.
+The advantage of GTD(λ) is its stability in the off-policy setting, at the 
+expense of worse sample efficiency and therefore slower learning.
 
 In Latex, the update equations look like:
 
 δ_{t}   = R_{t+1} + γ_{t+1} w_{t}^T x_{t+1} - w_{t}^{T} x_{t} 
 e_{t}   = ρ_{t} (λ_{t} γ_{t} e_{t-1} + x_{t})
-z_{t}   = λ_{t} γ_{t} z_{t-1} + x_{t}
-w_{t+1} = w_{t} + α[ δ_{t} e_{t} + (γ_{t+1} x_{t+1} - x_{t} ) (z_{t} - e_{t} ) h_{t} ]
-h_{t+1} = h_{t} + β[ δ_{t} e_{t} + (γ_{t+1} x_{t+1} - x_{t} ) z_{t}^{T} h_{t}]
+w_{t+1} = w_{t} + α[ δ_{t} e_{t} + γ_{t+1} (1 - λ_{t}) ( e_{t}^{T} h_{t} ) x_{t+1} ]
+h_{t+1} = h_{t} + β[ δ_{t} e_{t} - ( h_{t}^{T} x_{t} ) x_{t} ]
 
 Where:
     - δ refers to the temporal difference error; 
@@ -18,25 +21,22 @@ Where:
     - λ is the bootstrapping parameter
     - α and β are stepsizes parameters, 
     - w and h are weight vectors
-    - e and z are eligibility traces
+    - e is the eligibility trace
     - x and r are feature vectors and rewards respectively.
 """
 import numpy as np 
 
 
-class HTD:
-    """Hybrid Temporal Difference Learning, or HTD(λ).
-    Acts like TD(λ) in the on-policy case, but with GTD(λ)'s stability when
-    updating off-policy.
+class GTD:
+    """Gradient Temporal Difference Learning, or GTD(λ). Suitable for 
+    off-policy learning, but with typically lower sample efficiency than TD(λ).
 
     Attributes
     ----------
     n : int
         The number of features (and therefore the length of the weight vector).
     e : Vector[float]
-        The importance sampling eligibility trace vector.
-    z : Vector[float]
-        The on-policy eligibility trace vector.
+        The eligibility trace vector.
     w : Vector[float]
         The weight vector.
     h : Vector[float]
@@ -44,7 +44,7 @@ class HTD:
 
     Notes
     -----
-    See Adam White's PhD thesis, pg. 170-174 for a definition and discussion.
+    See page 74 and 91-92 of Maei's thesis for definition of the algorithm.
     """
     def __init__(self, n):
         """Initialize the learning algorithm.
@@ -56,7 +56,6 @@ class HTD:
         """
         self.n = n
         self.e = np.zeros(self.n)
-        self.z = np.zeros(self.n)
         self.w = np.zeros(self.n)
         self.h = np.zeros(self.n)
 
@@ -99,14 +98,12 @@ class HTD:
         """
         delta = r + gm_p*np.dot(self.theta, xp) - np.dot(self.theta, x)
         self.e = rho*(lm*gm*self.e + x)
-        self.z = lm*gm*self.z + x 
-        self.w += alpha*(delta*self.e + (gm_p*xp - x)*np.dot(self.z - self.e), self.h)
-        self.h += beta*(delta*self.e + (gm_p*xp - x)*np.dot(self.z, self.h)
+        self.w += alpha*(delta*self.e + gm_p*(1-lm)*np.dot(self.e, self.h)*xp)
+        self.h += beta*(delta*self.e + np.dot(self.h, x)*x)
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
         self.e = np.zeros(self.n)
-        self.z = np.zeros(self.n)
         self.w = np.zeros(self.n)
         self.h = np.zeros(self.n)
 
