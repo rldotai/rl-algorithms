@@ -20,7 +20,7 @@ Where:
     - δ refers to the temporal difference error; 
     - γ is the discount parameter,
     - λ is the bootstrapping parameter
-    - α and β are stepsizes parameters, 
+    - α and β are stepsize parameters, 
     - w and h are weight vectors
     - e is the eligibility trace
     - x and r are feature vectors and rewards respectively.
