@@ -1,8 +1,15 @@
 """
 Incremental Delta-Bar-Delta (IDBD), a stepsize adjustment algorithm.
+Not strictly a reinforcement learning algorithm, since it assumes more of an 
+online learning setting (in contrast to TD(λ), which attempts to solve the 
+Bellman equation, which depends on the current state as well as the next state
+in sequence: δ(t) = r(t) + v(t) - γv(t+1), vs. δ(t) = y(t) - x(t) * w(t)).
 
+Taken from:
 "Adapting Bias by Gradient Descent: An Incremental Version of Delta-Bar-Delta", 
-Sutton, 92
+Richard Sutton
+Proceedings of Tenth National Conf. on Artificial Intelligence, pp. 171–176, 
+MIT Press, 1992.
 """
 
 class IDBD:
