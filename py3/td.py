@@ -84,5 +84,6 @@ class TD:
         self.w += alpha*delta*self.z
 
     def reset(self):
+        """Reset weights, traces, and other parameters."""
         self.w = np.zeros(self.n)
         self.z = np.zeros(self.n)
