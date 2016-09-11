@@ -1,35 +1,39 @@
 """
-Gradient-TD(λ) Learning Algorithm, via Adam White's doctoral thesis, pg. 47., 
-and Maei's doctoral thesis pg. 74 and 91-92 for the original derivation and 
-analysis. 
-Note that the algorithm is referred to as TDC(λ) or GTD(λ) in that work, 
-whereas GTD and GTD2 refer to variations on the same idea but without 
+Gradient-TD(λ) Learning Algorithm, via Adam White's doctoral thesis, pg. 47.,
+and Maei's doctoral thesis pg. 74 and 91-92 for the original derivation and
+analysis.
+Note that the algorithm is referred to as TDC(λ) or GTD(λ) in that work,
+whereas GTD and GTD2 refer to variations on the same idea but without
 eligibility traces.
 
-The advantage of GTD(λ) is its stability in the off-policy setting, at the 
+The advantage of GTD(λ) is its stability in the off-policy setting, at the
 expense of worse sample efficiency and therefore slower learning.
+The step-sizes have to be chosen carefully, however, since there is some risk of
+divergence.
+Rules of thumb might be setting `beta` to `alpha/100` or similar; `alpha` might
+also have to be set to a smaller value than you would use with TD(λ).
 
 In Latex, the update equations look like:
 
-δ_{t}   = R_{t+1} + γ_{t+1} w_{t}^T x_{t+1} - w_{t}^{T} x_{t} 
+δ_{t}   = R_{t+1} + γ_{t+1} w_{t}^T x_{t+1} - w_{t}^{T} x_{t}
 e_{t}   = ρ_{t} (λ_{t} γ_{t} e_{t-1} + x_{t})
 w_{t+1} = w_{t} + α[ δ_{t} e_{t} + γ_{t+1} (1 - λ_{t}) ( e_{t}^{T} h_{t} ) x_{t+1} ]
 h_{t+1} = h_{t} + β[ δ_{t} e_{t} - ( h_{t}^{T} x_{t} ) x_{t} ]
 
 Where:
-    - δ refers to the temporal difference error; 
+    - δ refers to the temporal difference error;
     - γ is the discount parameter,
     - λ is the bootstrapping parameter
-    - α and β are stepsize parameters, 
+    - α and β are step-size parameters,
     - w and h are weight vectors
     - e is the eligibility trace
     - x and r are feature vectors and rewards respectively.
 """
-import numpy as np 
+import numpy as np
 
 
 class GTD:
-    """Gradient Temporal Difference Learning, or GTD(λ). Suitable for 
+    """Gradient Temporal Difference Learning, or GTD(λ). Suitable for
     off-policy learning, but with typically lower sample efficiency than TD(λ).
 
     Attributes
@@ -64,10 +68,10 @@ class GTD:
         """Get the approximate value for feature vector `x`."""
         return np.dot(self.w, x)
 
-    def update(self, x, r, xp, alpha, beta, gm, gm_p, lm, lm_p, rho:
+    def update(self, x, r, xp, alpha, beta, gm, gm_p, lm, lm_p, rho):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
-        
+
         Parameters
         ----------
         x : array_like
@@ -77,29 +81,29 @@ class GTD:
         xp : array_like
             The observation/features from the next timestep.
         alpha : float
-            The stepsize parameter for updating the weight vector.
-        beta : float 
-            The stepsize parameter for updating the correction weights.
-        gm : float 
+            The step-size parameter for updating the weight vector.
+        beta : float
+            The step-size parameter for updating the correction weights.
+        gm : float
             Gamma, abbreviated `gm`, the discount factor for the current state.
-        gm_p : float 
+        gm_p : float
             The discount factor for the next state.
-        lm : float 
-            Lambda, abbreviated `lm`, is the bootstrapping parameter for the 
+        lm : float
+            Lambda, abbreviated `lm`, is the bootstrapping parameter for the
             current timestep.
-        lm_p: float 
+        lm_p: float
             The bootstrapping parameter for the next timestep.
-        rho : float 
-            The importance sampling ratio between the target policy and the 
+        rho : float
+            The importance sampling ratio between the target policy and the
             behavior policy for the current timestep.
 
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
-        Other parameters are floats but are generally expected to be in the 
+        Other parameters are floats but are generally expected to be in the
         interval [0, 1].
         """
-        delta = r + gm_p*np.dot(self.theta, xp) - np.dot(self.theta, x)
+        delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.e = rho*(lm*gm*self.e + x)
         self.w += alpha*(delta*self.e + gm_p*(1-lm_p)*np.dot(self.e, self.h)*xp)
         self.h += beta*(delta*self.e + np.dot(self.h, x)*x)
@@ -109,4 +113,3 @@ class GTD:
         self.e = np.zeros(self.n)
         self.w = np.zeros(self.n)
         self.h = np.zeros(self.n)
-
