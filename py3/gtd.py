@@ -21,13 +21,13 @@ w_{t+1} = w_{t} + α[ δ_{t} e_{t} + γ_{t+1} (1 - λ_{t}) ( e_{t}^{T} h_{t} ) x
 h_{t+1} = h_{t} + β[ δ_{t} e_{t} - ( h_{t}^{T} x_{t} ) x_{t} ]
 
 Where:
-    - δ refers to the temporal difference error;
-    - γ is the discount parameter,
+    - δ refers to the temporal difference error
+    - γ is the discount parameter
     - λ is the bootstrapping parameter
-    - α and β are step-size parameters,
+    - α and β are step-size parameters
     - w and h are weight vectors
     - e is the eligibility trace
-    - x and r are feature vectors and rewards respectively.
+    - x and r are feature vectors and rewards respectively
 """
 import numpy as np
 
