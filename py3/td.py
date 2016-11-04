@@ -86,7 +86,6 @@ class TD:
     def update(self, x, r, xp, alpha, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
-
         Parameters
         ----------
         x : Vector[float]
@@ -105,6 +104,11 @@ class TD:
             Lambda, abbreviated `lm`, is the bootstrapping parameter for the
             current timestep.
 
+        Returns
+        -------
+        delta : float
+            The temporal difference error from the update.
+
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
@@ -114,6 +118,7 @@ class TD:
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.z = x + gm*lm*self.z
         self.w += alpha*delta*self.z
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

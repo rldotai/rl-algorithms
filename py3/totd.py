@@ -65,6 +65,11 @@ class TOTD:
             Lambda, abbreviated `lm`, is the bootstrapping parameter for the
             current timestep.
 
+        Returns
+        -------
+        delta : float
+            The temporal difference error from the update.
+
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
@@ -74,6 +79,7 @@ class TOTD:
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.z = gm*lm*self.z + alpha*x - alpha*gm*lm*np.dot(self.z, x)*x
         self.w += delta*self.z + alpha*(np.dot(self.w_old, x) - np.dot(self.w, x))*x
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

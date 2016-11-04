@@ -97,6 +97,11 @@ class GTD:
             The importance sampling ratio between the target policy and the
             behavior policy for the current timestep.
 
+        Returns
+        -------
+        delta : float
+            The temporal difference error from the update.
+
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
@@ -107,6 +112,7 @@ class GTD:
         self.e = rho*(lm*gm*self.e + x)
         self.w += alpha*(delta*self.e + gm_p*(1-lm_p)*np.dot(self.e, self.h)*xp)
         self.h += beta*(delta*self.e + np.dot(self.h, x)*x)
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
