@@ -65,6 +65,11 @@ class ETD:
         interest : float 
             The interest for the current timestep.
 
+        Returns
+        -------
+        delta : float
+            The temporal difference error from the update.
+
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
@@ -79,6 +84,7 @@ class ETD:
 
         # prepare for next iteration
         self.F *= rho
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

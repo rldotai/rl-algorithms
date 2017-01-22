@@ -91,6 +91,11 @@ class HTD:
             The importance sampling ratio between the target policy and the 
             behavior policy for the current timestep.
 
+        Returns
+        -------
+        delta : float
+            The temporal difference error from the update.
+        
         Notes
         -----
         Features (`x` and `xp`) are assumed to be 1D arrays of length `self.n`.
@@ -102,6 +107,8 @@ class HTD:
         self.z = lm*gm*self.z + x 
         self.w += alpha*(delta*self.e + (gm_p*xp - x)*np.dot(self.z - self.e), self.h)
         self.h += beta*(delta*self.e + (gm_p*xp - x)*np.dot(self.z, self.h)
+
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
