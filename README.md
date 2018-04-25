@@ -18,9 +18,10 @@ To facilitate this, the algorithms listed are written in a straightforward style
 - [TOTD(λ): True-Online Temporal Difference Learning, AKA TD with "Dutch Traces"](py3/totd.py)
 - [ESTD(λ): Least Squares Emphatic Temporal Difference Learning](py3/elstd.py)
 - [HTD(λ): Hybrid Temporal Difference Learning](py3/htd.py)
+- [DTD(λ) or TD-δ^2: Online Variance Estimation via temporal difference errors](py3/td-variance.py)
 
 # Contributing
 
 Send me a pull request if you have code to contribute.
 
-Alternatively, raise an issue and provide me with a link to the paper describing the algorithm, and I will read and implement it when I get a chance. 
+Alternatively, raise an issue and provide me with a link to the paper describing the algorithm, and I will read and implement it when I get a chance.
