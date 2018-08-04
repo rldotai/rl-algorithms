@@ -110,8 +110,8 @@ class GTD:
         """
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.e = rho*(lm*gm*self.e + x)
-        self.w += alpha*(delta*self.e + gm_p*(1-lm_p)*np.dot(self.e, self.h)*xp)
-        self.h += beta*(delta*self.e + np.dot(self.h, x)*x)
+        self.w += alpha*(delta*self.e - gm_p*(1-lm_p)*np.dot(self.e, self.h)*xp)
+        self.h += beta*(delta*self.e - np.dot(self.h, x)*x)
         return delta
 
     def reset(self):
