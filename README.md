@@ -18,7 +18,16 @@ To facilitate this, the algorithms listed are written in a straightforward style
 - [TOTD(λ): True-Online Temporal Difference Learning, AKA TD with "Dutch Traces"](py3/totd.py)
 - [ESTD(λ): Least Squares Emphatic Temporal Difference Learning](py3/elstd.py)
 - [HTD(λ): Hybrid Temporal Difference Learning](py3/htd.py)
-- [DTD(λ) or TD-δ^2: Online Variance Estimation via temporal difference errors](py3/td-variance.py)
+- [DVTD(λ) or TD-δ^2: Online Variance Estimation via temporal difference errors](py3/td-variance.py)
+    - [The paper describing it](https://arxiv.org/abs/1801.08287)
+
+## TODO
+
+- [ ] Q-Learning
+- [ ] SARSA
+- [ ] Distributional RL algorithms
+- [ ] Other second-order TD algorithms (e.g., NTD)
+- [ ] Actor-Critic algorithms
 
 # Contributing
 
