@@ -94,8 +94,8 @@ References
 import numpy as np
 
 
-class DTD:
-    """Direct-Variance Temporal Difference Learning or DTD(λ).
+class DVTD:
+    """Direct-Variance Temporal Difference Learning or DVTD(λ).
 
     Attributes
     ----------
